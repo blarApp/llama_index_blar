@@ -155,6 +155,16 @@ _DEFAULT_SIGNATURE_IDENTIFIERS: Dict[str, Dict[str, _SignatureCaptureOptions]] =
             name_identifier="property_identifier",
         ),
     },
+    "ruby": {
+        "class": _SignatureCaptureOptions(
+            end_signature_types=[_SignatureCaptureType(type="end", inclusive=False)],
+            name_identifier="constant",
+        ),
+        "method": _SignatureCaptureOptions(
+            end_signature_types=[_SignatureCaptureType(type="end", inclusive=False)],
+            name_identifier="identifier",
+        ),
+    },
 }
 
 
@@ -177,6 +187,9 @@ _COMMENT_OPTIONS: Dict[str, _CommentOptions] = {
         comment_template="<!-- {} -->", scope_method=_ScopeMethod.HTML_END_TAGS
     ),
     "python": _CommentOptions(
+        comment_template="# {}", scope_method=_ScopeMethod.INDENTATION
+    ),
+    "ruby": _CommentOptions(
         comment_template="# {}", scope_method=_ScopeMethod.INDENTATION
     ),
     "typescript": _CommentOptions(
