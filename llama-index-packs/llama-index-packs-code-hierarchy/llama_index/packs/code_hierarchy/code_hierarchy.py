@@ -157,18 +157,10 @@ _DEFAULT_SIGNATURE_IDENTIFIERS: Dict[str, Dict[str, _SignatureCaptureOptions]] =
     },
     "ruby": {
         "class": _SignatureCaptureOptions(
-            start_signature_types=[
-                _SignatureCaptureType(type="body_statement", inclusive=False),
-                _SignatureCaptureType(type="comment", inclusive=False),
-            ],
             end_signature_types=[_SignatureCaptureType(type="end", inclusive=True)],
             name_identifier="constant",
         ),
         "method": _SignatureCaptureOptions(
-            start_signature_types=[
-                _SignatureCaptureType(type="body_statement", inclusive=False),
-                _SignatureCaptureType(type="comment", inclusive=False),
-            ],
             end_signature_types=[_SignatureCaptureType(type="end", inclusive=True)],
             name_identifier="identifier",
         ),
