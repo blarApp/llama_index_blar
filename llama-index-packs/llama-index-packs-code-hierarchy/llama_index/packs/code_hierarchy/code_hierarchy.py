@@ -157,11 +157,24 @@ _DEFAULT_SIGNATURE_IDENTIFIERS: Dict[str, Dict[str, _SignatureCaptureOptions]] =
     },
     "ruby": {
         "class": _SignatureCaptureOptions(
-            end_signature_types=[_SignatureCaptureType(type="end", inclusive=True)],
+            end_signature_types=[
+                _SignatureCaptureType(type="body_statement", inclusive=False),
+                _SignatureCaptureType(type="end", inclusive=False),
+            ],
+            name_identifier="constant",
+        ),
+        "module": _SignatureCaptureOptions(
+            end_signature_types=[
+                _SignatureCaptureType(type="body_statement", inclusive=False),
+                _SignatureCaptureType(type="end", inclusive=False),
+            ],
             name_identifier="constant",
         ),
         "method": _SignatureCaptureOptions(
-            end_signature_types=[_SignatureCaptureType(type="end", inclusive=True)],
+            end_signature_types=[
+                _SignatureCaptureType(type="body_statement", inclusive=False),
+                _SignatureCaptureType(type="end", inclusive=False),
+            ],
             name_identifier="identifier",
         ),
     },
@@ -172,6 +185,7 @@ class _ScopeMethod(Enum):
     INDENTATION = "INDENTATION"
     BRACKETS = "BRACKETS"
     HTML_END_TAGS = "HTML_END_TAGS"
+    END_TAG = "END_TAG"
 
 
 class _CommentOptions(BaseModel):
@@ -189,9 +203,7 @@ _COMMENT_OPTIONS: Dict[str, _CommentOptions] = {
     "python": _CommentOptions(
         comment_template="# {}", scope_method=_ScopeMethod.INDENTATION
     ),
-    "ruby": _CommentOptions(
-        comment_template="# {}", scope_method=_ScopeMethod.INDENTATION
-    ),
+    "ruby": _CommentOptions(comment_template="# {}", scope_method=_ScopeMethod.END_TAG),
     "typescript": _CommentOptions(
         comment_template="// {}", scope_method=_ScopeMethod.BRACKETS
     ),
@@ -915,6 +927,19 @@ class CodeHierarchyNodeParser(NodeParser):
                 first_indentation_lvl + 1
             ) + comment_options.comment_template.format(
                 cls._get_comment_text(child_node)
+            )
+
+        elif comment_options.scope_method == _ScopeMethod.END_TAG:
+            replacement_txt += "\n"
+            replacement_txt += indentation_char * indentation_count_per_lvl * (
+                first_indentation_lvl + 1
+            ) + comment_options.comment_template.format(
+                cls._get_comment_text(child_node)
+            )
+            replacement_txt += (
+                "\n"
+                + indentation_char * indentation_count_per_lvl * first_indentation_lvl
+                + "end"
             )
 
         elif comment_options.scope_method == _ScopeMethod.HTML_END_TAGS:
